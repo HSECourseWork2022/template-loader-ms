@@ -1,22 +1,22 @@
 package dev.hse.template.kafka;
 
-import dev.hse.template.pojo.TemplateRaw;
-import dev.hse.template.service.PreloadProcessingService;
+import dev.hse.template.pojo.TemplateFiltered;
+import dev.hse.template.service.LoaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-@Slf4j(topic = "[preloader][template]")
+@Slf4j(topic = "[loader][template][kafka-consumer]")
 @Service
 @RequiredArgsConstructor
 public class KafkaConsumerService {
 
-    private final PreloadProcessingService preloadProcessingService;
+    private final LoaderService loaderService;
 
-    @KafkaListener(topics = "${filtered.topic}")
-    public void consume(TemplateRaw templateRaw) {
-        log.info("Got from kafka: {} ", templateRaw);
-        preloadProcessingService.process(templateRaw);
+    @KafkaListener(topicPattern = ".+\\.${loader.subtheme}\\.filters\\.outcome")
+    public void consumeTemplateTopic(TemplateFiltered templateFiltered) {
+        log.info("Got from kafka: {} ", templateFiltered);
+        loaderService.process(templateFiltered);
     }
 }

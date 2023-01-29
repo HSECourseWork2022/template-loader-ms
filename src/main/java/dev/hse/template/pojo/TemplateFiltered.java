@@ -10,10 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TemplateMatched {
+public class TemplateFiltered {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC+3")
     LocalDateTime timestamp;
-    Long sourceId;
-    Long matchedId;
-    Double price;
 }

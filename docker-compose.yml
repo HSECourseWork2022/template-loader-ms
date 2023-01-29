@@ -4,8 +4,8 @@ networks:
   app-tier:
     driver: bridge
 services:
-  template_preloader:
-    container_name: template_preloader
+  template-loader:
+    container_name: template-loader-container
     build:
       dockerfile: Dockerfile
       context: .
@@ -13,9 +13,11 @@ services:
       - app-tier
     environment:
       - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka:9092
-      - SPRING_KAFKA_CONSUMER_GROUP-ID=template-preloaders
-      - FILTERED_TOPIC=filtered.template
-      - LOADER_TOPIC=loader.template
+      - SPRING_KAFKA_CONSUMER_GROUP-ID=template-loaders
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-container:5432/template
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - LOADER_SUBTHEME=template
     depends_on:
       - kafka
 
@@ -61,3 +63,15 @@ services:
     restart: always
     depends_on:
       - kafka
+
+  postgres:
+    container_name: postgres-container
+    image: postgres:14-alpine
+    networks:
+      - app-tier
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=template
